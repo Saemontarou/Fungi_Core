@@ -9,7 +9,7 @@ public class Health : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            HealthSystem.health += 2;
+            HealthSystem.health += 100;
             
             
             Debug.Log("YOU PICKED UP THE HEALTH.");
