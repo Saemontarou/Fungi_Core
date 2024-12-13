@@ -2,8 +2,6 @@ using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-
-
 public class RandomRotation : MonoBehaviour
 {
     [SerializeField] private float rotationSpeed;
@@ -12,8 +10,6 @@ public class RandomRotation : MonoBehaviour
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
-
         _rigidbody.angularVelocity = Random.insideUnitSphere * rotationSpeed;
-
     }
 }
