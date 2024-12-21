@@ -19,7 +19,6 @@ public class EnemyMove : MonoBehaviour
     {
         _rb2D = GetComponent<Rigidbody2D>();
         _sprite = GetComponentInChildren<SpriteRenderer>();
-
     }
 
     void Update()

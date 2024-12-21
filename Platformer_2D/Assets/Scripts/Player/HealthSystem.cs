@@ -14,10 +14,14 @@ public class HealthSystem : MonoBehaviour
     public Sprite fullLive;
     public Sprite halfLive;
     public Sprite emptyLive;
+    
+    private void Start()
+    {
+        health = 6;
+    }
 
     private void Update()
     {
-
         for (int i = 0; i < lives.Length; i++)
         {
             if (health > numberLives * 2)

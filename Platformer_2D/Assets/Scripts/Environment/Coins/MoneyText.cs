@@ -10,6 +10,7 @@ public class MoneyText : MonoBehaviour
    private void Start()
    {
       text = GetComponent<Text>();
+      Coin = 0;
    }
    private void Update()
    {

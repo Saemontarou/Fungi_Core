@@ -1,7 +1,7 @@
-using System.Security.Cryptography;
 using UnityEngine;
 
-public class DamageRedBlue : MonoBehaviour
+public class PlayerDeath : MonoBehaviour
+
 {
     void OnCollisionEnter2D(Collision2D collision)
     {
@@ -10,9 +10,11 @@ public class DamageRedBlue : MonoBehaviour
             HealthSystem.health -= 1;
         }
 
-        if (collision.gameObject.tag == "Axe")
+        if (HealthSystem.health <= 0)
         {
             Destroy(this.gameObject);
+            GameManager.Instance.Lose();
+            Time.timeScale = 0;
         }
     }
 }

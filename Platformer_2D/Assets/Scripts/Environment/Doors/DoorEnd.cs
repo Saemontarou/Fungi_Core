@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DoorEnd : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class DoorEnd : MonoBehaviour
         { 
             
             Debug.Log("*** THE END ***");
+            SceneManager.LoadScene("EndScene");
         }
     }
 }

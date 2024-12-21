@@ -6,7 +6,7 @@ public class DamageHazard : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            HealthSystem.health -= 4;
+            HealthSystem.health -= 2;
         }
     }
 }

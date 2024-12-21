@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour
         Jump();
         DrawGizmos();
     }
+    
     private void Move()
     {
         _playerMovePoint = Vector3.right * Input.GetAxisRaw("Horizontal");
@@ -38,7 +39,6 @@ public class PlayerController : MonoBehaviour
             _speed * Time.deltaTime);
         
         _animator.SetFloat("moveX", Mathf.Abs(Input.GetAxisRaw("Horizontal")));
-        
         
         if (_playerMovePoint.x < 0)
         {
