@@ -14,12 +14,26 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _speed = 5.0f;
     [SerializeField] private float _tiltAngle = 4.0f;
     [SerializeField] private Boundary _boundary;
+
+    [SerializeField] private GameObject _shotPrefab;
+    [SerializeField] private Transform _shotSpawn;
+    [SerializeField] private float _fireRate = 1.2f;
     
+    private float _nextFire;
     private Rigidbody _rigidbody;
     
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
+    }
+    
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _nextFire)
+        {
+            _nextFire = Time.time + _fireRate;
+            Instantiate(_shotPrefab, _shotSpawn.position, _shotSpawn.rotation);
+        }
     }
     
     private void FixedUpdate()
@@ -37,7 +51,6 @@ public class PlayerController : MonoBehaviour
             Mathf.Clamp(_rigidbody.position.y, _boundary.yMin, _boundary.yMax), 
             0.0f
         );
-        
         _rigidbody.rotation = Quaternion.Euler(-90.0f, 0.0f, _rigidbody.linearVelocity.x * -_tiltAngle);
     }
 }
