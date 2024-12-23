@@ -11,6 +11,9 @@ public class Boundary
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private PoolObject _poolObject;
+    
+    
     [SerializeField] private float _speed = 5.0f;
     [SerializeField] private float _tiltAngle = 4.0f;
     [SerializeField] private Boundary _boundary;
@@ -32,6 +35,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _nextFire)
         {
             _nextFire = Time.time + _fireRate;
+            _poolObject.GetBullet(_shotSpawn.position, _shotSpawn.rotation);
             Instantiate(_shotPrefab, _shotSpawn.position, _shotSpawn.rotation);
         }
     }
