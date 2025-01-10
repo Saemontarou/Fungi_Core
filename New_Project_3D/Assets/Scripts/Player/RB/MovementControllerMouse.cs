@@ -1,4 +1,5 @@
 using System;
+using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.PlayerLoop;
@@ -8,23 +9,21 @@ public class MovementControllerMouse : MonoBehaviour
     [SerializeField] private float _moveSpeed = 5f;
     [SerializeField] private Camera _camera;
     
-    [SerializeField] private float _jumpHeight = 2f;
-    [SerializeField] private float _gravity = -9.81f;
 
     private Rigidbody _rb;
-
     private NavMeshAgent _agent;
     
     private Vector3 _targetPosition;
     private bool _isMoved;
 
-    private bool _isGrounded;
+    private Shoot _shoot;
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
-        _rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        _rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
         _agent = GetComponent<NavMeshAgent>();
+        _shoot = GetComponent<Shoot>();
     }
 
     private void Update()
@@ -33,9 +32,14 @@ public class MovementControllerMouse : MonoBehaviour
         {
             HandleMouseInput();
         }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            _shoot.ShootBullet();
+        }
         
-        HandleJump();
     }
+    
 
     private void FixedUpdate()
     {
@@ -46,29 +50,6 @@ public class MovementControllerMouse : MonoBehaviour
         
     }
     
-    private void HandleJump()
-    {
-        if (Input.GetButtonDown("Jump") && _isGrounded)
-        {
-            _rb.AddForce(Vector3.up * _jumpHeight, ForceMode.Impulse);
-            _isGrounded = false;
-        }
-    }
-
-    private void OnCollisionEnter(Collision other)
-    {
-        foreach (ContactPoint contact in other.contacts)
-        {
-            if (contact.normal.y > 0.5f)
-            {
-                _isGrounded = true;
-                break;
-            }
-        }
-    }
-    
-    
-
     private void HandleMovement()
     {
         Vector3 direction = (_targetPosition - transform.position).normalized;

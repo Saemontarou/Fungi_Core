@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.AI;
 
 
 public class FieldOfView : MonoBehaviour
@@ -18,8 +18,7 @@ public class FieldOfView : MonoBehaviour
     public MeshFilter _viewMeshFilter;
     
     private Mesh _viewMesh;
-
-
+    
     private void Start()
     {
         _viewMesh = new Mesh();
@@ -83,7 +82,7 @@ public class FieldOfView : MonoBehaviour
     }
 
 
-    private void GetVisibleTarget()
+    public void GetVisibleTarget()
     {
         _targets.Clear();
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, _viewRadius, _targetMask);
@@ -94,7 +93,7 @@ public class FieldOfView : MonoBehaviour
             if (Vector3.Angle(transform.forward, directionToTarget) < _viewAngle / 2)
             {
                 float distanceToTarget = Vector3.Distance(transform.position, target.position);
-                if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, _obstacleMask))
+                if (!Physics.Raycast(transform.position,directionToTarget, distanceToTarget, _obstacleMask))
                 {
                     _targets.Add(target);
                 }
@@ -144,6 +143,4 @@ public struct ViewCastInfo
         angle = Angle;
 
     }
-
-
 }

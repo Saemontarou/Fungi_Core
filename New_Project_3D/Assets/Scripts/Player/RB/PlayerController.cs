@@ -7,7 +7,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _moveSpeed = 5f;
     [SerializeField] private float _rotationSpeed = 720f;
     [SerializeField] private float _jumpHeight = 2f;
-    [SerializeField] private float _gravity = -9.81f;
     [SerializeField] private Camera _camera;
 
     private Rigidbody _rigidbody;
@@ -18,7 +17,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        _rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
     }
 
     private void Update()
