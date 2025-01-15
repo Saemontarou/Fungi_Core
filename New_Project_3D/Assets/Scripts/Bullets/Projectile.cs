@@ -24,7 +24,10 @@ public class Projectile : MonoBehaviour
 
    private void OnCollisionEnter(Collision other)
    {
-      ReturnToPool();
+      if (!other.gameObject.CompareTag("Player"))
+      {
+         ReturnToPool();
+      }
    }
 
    private void ReturnToPool()

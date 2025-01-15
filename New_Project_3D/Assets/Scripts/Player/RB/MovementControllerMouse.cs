@@ -8,11 +8,12 @@ public class MovementControllerMouse : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed = 5f;
     [SerializeField] private Camera _camera;
-    
 
+    [SerializeField] private AudioSource _reloadAmmo;
+    
     private Rigidbody _rb;
     private NavMeshAgent _agent;
-    
+
     private Vector3 _targetPosition;
     private bool _isMoved;
 
@@ -21,9 +22,14 @@ public class MovementControllerMouse : MonoBehaviour
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
-        _rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+        _rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY |
+                          RigidbodyConstraints.FreezeRotationZ;
         _agent = GetComponent<NavMeshAgent>();
         _shoot = GetComponent<Shoot>();
+        _shoot._currentAmmo = _shoot._poolObject.poolSize;
+        
+        _reloadAmmo = GetComponentInChildren<AudioSource>();
+        
     }
 
     private void Update()
@@ -33,13 +39,19 @@ public class MovementControllerMouse : MonoBehaviour
             HandleMouseInput();
         }
 
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetKey(KeyCode.E))
         {
             _shoot.ShootBullet();
         }
-        
+      
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Debug.Log("RELOADING POOL");
+            _shoot._currentAmmo = _shoot._poolObject.poolSize;
+            _reloadAmmo.Play();
+        }
     }
-    
+
 
     private void FixedUpdate()
     {
@@ -47,9 +59,9 @@ public class MovementControllerMouse : MonoBehaviour
         {
             // HandleMovement();
         }
-        
+
     }
-    
+
     private void HandleMovement()
     {
         Vector3 direction = (_targetPosition - transform.position).normalized;
@@ -79,10 +91,11 @@ public class MovementControllerMouse : MonoBehaviour
                 if (Physics.Raycast(ray, out RaycastHit hit))
                 {
                     // _targetPosition = hit.point;
-
-                    _agent.SetDestination(hit.point);
                     
+                    _agent.SetDestination(hit.point);
+
                     _isMoved = true;
+
                 }
             }
         }

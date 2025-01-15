@@ -6,10 +6,13 @@ using UnityEngine;
 public class PoolObject : MonoBehaviour
 {
    [SerializeField] private GameObject _bulletPrefab;
-   public int poolSize = 20;
+
+   [SerializeField] private AudioSource _audioShoot;
+   
+   public int poolSize = 32;
 
    private List<GameObject> _bulletPool;
-
+   
    private void Awake()
    {
       _bulletPool = new List<GameObject>();
@@ -29,13 +32,17 @@ public class PoolObject : MonoBehaviour
          if (!bullet.activeInHierarchy)
          {
             bullet.SetActive(true);
+            
+            _audioShoot.Play();
+            
             return bullet;
          }
       }
 
-      GameObject bulletObj = Instantiate(_bulletPrefab);
-      bulletObj.SetActive(true);
-      return bulletObj;
+      // GameObject bulletObj = Instantiate(_bulletPrefab);
+      // bulletObj.SetActive(true);
+      // return bulletObj;
+      return null;
    }
 
    public void ReturnBullet(GameObject bullet)
