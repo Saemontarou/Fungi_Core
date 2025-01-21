@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 5f1aa1d812a4d1c4885527c4bd937b92
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 226825
+  packageName: XSGridEditor
+  packageVersion: 1.0
+  assetPath: Assets/XSGridEditor/Resources/Prefabs/Tiles/RoomGround.prefab
+  uploadId: 527943

@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 public class ClickOnEnemy : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private ParticleSystem _clickEffect;
-
+    
     public void OnPointerClick(PointerEventData eventData)
     {
         

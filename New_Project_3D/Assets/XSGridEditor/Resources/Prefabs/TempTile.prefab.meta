@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f433cae2a2bb5bb4b8603e55985c0da2
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 226825
+  packageName: XSGridEditor
+  packageVersion: 1.0
+  assetPath: Assets/XSGridEditor/Resources/Prefabs/TempTile.prefab
+  uploadId: 527943

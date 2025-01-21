@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: be755e3152821764685387a04dbd7d9a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 226825
+  packageName: XSGridEditor
+  packageVersion: 1.0
+  assetPath: Assets/XSGridEditor/Resources/Prefabs/XSGridEditor.prefab
+  uploadId: 527943

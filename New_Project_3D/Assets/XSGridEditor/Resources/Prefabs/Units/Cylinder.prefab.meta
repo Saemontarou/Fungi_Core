@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f0cb9f110b3acde4bacd7bbdcf236c15
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 226825
+  packageName: XSGridEditor
+  packageVersion: 1.0
+  assetPath: Assets/XSGridEditor/Resources/Prefabs/Units/Cylinder.prefab
+  uploadId: 527943

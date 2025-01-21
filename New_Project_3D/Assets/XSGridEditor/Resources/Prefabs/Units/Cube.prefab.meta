@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8244fe662dd344949ac143dc6398f024
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 226825
+  packageName: XSGridEditor
+  packageVersion: 1.0
+  assetPath: Assets/XSGridEditor/Resources/Prefabs/Units/Cube.prefab
+  uploadId: 527943

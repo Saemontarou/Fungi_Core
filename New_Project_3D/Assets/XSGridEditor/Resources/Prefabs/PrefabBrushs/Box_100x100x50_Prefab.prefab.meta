@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 512a4ab1748c8c94e8ca8f49afe20691
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 226825
+  packageName: XSGridEditor
+  packageVersion: 1.0
+  assetPath: Assets/XSGridEditor/Resources/Prefabs/PrefabBrushs/Box_100x100x50_Prefab.prefab
+  uploadId: 527943
