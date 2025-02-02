@@ -12,6 +12,7 @@ public class PlayerInteract : MonoBehaviour
         {
             var inventoryItem = item.CreateItem();
             _inventoryObject.AddItem(inventoryItem, 1);
+            Destroy(item.gameObject);
         }
     }
 
@@ -20,7 +21,7 @@ public class PlayerInteract : MonoBehaviour
     //     var item = other.GetComponent<GroundItemWithoutMesh>();
     //     if (item)
     //     {
-    //         Item _item = new Item(item.)
+    //         Item _item = new Item(item.item);
     //     }
     // }
 }

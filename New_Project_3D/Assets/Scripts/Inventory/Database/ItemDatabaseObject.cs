@@ -9,12 +9,12 @@ public class ItemDatabaseObject : ScriptableObject, ISerializationCallbackReceiv
 
     public ItemsObject[] Items;
 
-    public Dictionary<int, ItemsObject> GetItem;
+    public Dictionary<int, ItemsObject> GetItem = new Dictionary<int, ItemsObject>();
     
     
     public void OnBeforeSerialize()
     {
-        // GetItem = new Dictionary<int, ItemsObject>();
+        GetItem = new Dictionary<int, ItemsObject>();
     }
 
     public void OnAfterDeserialize()

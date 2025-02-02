@@ -7,6 +7,17 @@ public class InventoryObject : ScriptableObject
     public ItemDatabaseObject Database;
     public Inventory Container;
 
+
+    public Sprite GetSpriteByItemId(int id)
+    {
+        if (Database.GetItem.TryGetValue(id, out var slot))
+        {
+            return slot.Icon;
+        }
+
+        return null;
+    }
+
     public void AddItem(Item item, int amount)
     {
         for (int i = 0; i < Container.Items.Length; i++)
@@ -67,6 +78,8 @@ public class InventorySlot
     public int SlotID = -1;
     public Item item;
     public int amount;
+
+    internal bool IsEmpty => item.Id < 0;
 
     public InventorySlot()
     {

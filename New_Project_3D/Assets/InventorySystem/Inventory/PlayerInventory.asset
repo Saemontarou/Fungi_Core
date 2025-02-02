@@ -18,8 +18,12 @@ MonoBehaviour:
     - SlotID: -1
       item:
         Id: 0
-        Name: 
-        Buff: []
+        Name: Apple
+        Buff:
+        - Attributes: 0
+          Value: 16
+          MaxValue: 10
+          MinValue: 40
       amount: 0
     - SlotID: -1
       item:

@@ -8,6 +8,7 @@ public class MovementControllerMouse : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed = 5f;
     [SerializeField] private Camera _camera;
+    [SerializeField] private GameObject _canvas;
 
     [SerializeField] private AudioSource _reloadAmmo;
     
@@ -49,6 +50,18 @@ public class MovementControllerMouse : MonoBehaviour
             Debug.Log("RELOADING POOL");
             _shoot._currentAmmo = _shoot._poolObject.poolSize;
             _reloadAmmo.Play();
+        }
+
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            if (!_canvas.activeSelf)
+            {
+                _canvas.SetActive(true);
+            }
+            else
+            {
+                _canvas.SetActive(false);
+            }
         }
     }
 
