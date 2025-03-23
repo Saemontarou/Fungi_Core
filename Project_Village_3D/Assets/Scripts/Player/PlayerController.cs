@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-
-[RequireComponent(typeof(CharacterController))]
 
 public class PlayerController : MonoBehaviour
 {
@@ -22,7 +19,19 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector]
     public bool canMove = true;
+    
+    
+    //[SerializeField] private AudioSource _reloadAmmo;
+    // private Throw _throw;
 
+    private void Awake()
+    {
+        // _throw = GetComponent<Throw>();
+        // _throw._currentAmmo = _throw._poolObject.poolSize;
+        
+        //_reloadAmmo = GetComponentInChildren<AudioSource>();
+    }
+    
     void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -32,6 +41,18 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        // if(Input.GetMouseButtonDown(0))
+        // {
+        //     _throw.ThrowStone();
+        // }
+        //
+        // if (Input.GetKeyDown(KeyCode.R))
+        // {
+        //     Debug.Log("RELOADING POOL");
+        //     _throw._currentAmmo = _throw._poolObject.poolSize;
+        //     _reloadAmmo.Play();
+        // }
+        
         if(Input.GetKey(KeyCode.LeftShift))
         {
             Sprint = true;
@@ -66,7 +87,7 @@ public class PlayerController : MonoBehaviour
 
        
         characterController.Move(moveDirection * Time.deltaTime);
-        
+
         if (canMove)
         {
             rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
