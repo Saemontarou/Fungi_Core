@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -13,13 +14,13 @@ public class EnemyMovement : MonoBehaviour
     public Transform[] WayPoints;
     public int CurrentPatch;
 
-    public enum EnemyState {Patrol, Stay, Chase};
-    public EnemyState EnemyBehavior;
+    public enum State {Patrol, Stay, Chase};
+    public State EnemyState;
 
     private Transform LastPoint;
     public bool CheckLastPoint;
     float EnemyWait;
-
+    
     void Start()
     {
         NavAgent = gameObject.GetComponent<NavMeshAgent>();
@@ -30,7 +31,7 @@ public class EnemyMovement : MonoBehaviour
     {
         if (CheckLastPoint == false)
         {
-            if (EnemyBehavior == EnemyState.Patrol)
+            if (EnemyState == State.Patrol)
             {
                 gameObject.GetComponent<Animator>().SetBool("Move", true);
                 NavAgent.SetDestination(WayPoints[CurrentPatch].transform.position);
@@ -42,12 +43,12 @@ public class EnemyMovement : MonoBehaviour
                 }
             }
 
-            if (EnemyBehavior == EnemyState.Stay)
+            if (EnemyState == State.Stay)
             {
                 gameObject.GetComponent<Animator>().SetBool("Move", false);
             }
 
-            if (EnemyBehavior == EnemyState.Chase)
+            if (EnemyState == State.Chase)
             {
                 gameObject.GetComponent<Animator>().SetBool("Move", true);
                 if (gameObject.GetComponent<FieldOfView>().canSeePlayer == false)
@@ -70,7 +71,7 @@ public class EnemyMovement : MonoBehaviour
             if (pointDistance < 1 || EnemyWait >= 0)
             {
                 CheckLastPoint = false;
-                EnemyBehavior = EnemyState.Patrol;
+                EnemyState = State.Patrol;
                 EnemyWait = 0;
             }
             else

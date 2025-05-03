@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FieldOfView : MonoBehaviour
@@ -35,7 +33,7 @@ public class FieldOfView : MonoBehaviour
     {
         if (canSeePlayer == true)
         {
-            gameObject.GetComponent<EnemyMovement>().EnemyBehavior = EnemyMovement.EnemyState.Chase;
+            gameObject.GetComponent<EnemyMovement>().EnemyState = EnemyMovement.State.Chase;
         }
     }
 

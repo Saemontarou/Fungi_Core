@@ -7,6 +7,18 @@ public class GameManager : MonoBehaviour
     public GameObject deathScreen;
     public GameObject aimImage;
     public GameObject crystals;
+
+    // [Header("Башни с кристаллами")] 
+    // public GameObject towerRedHead;
+    // public GameObject towerGreenHead;
+    // public GameObject towerBlueHead;
+    // public GameObject towerOrangeHead;
+    // public GameObject towerPurpleHead;
+
+    public GameObject enemyBossOne;
+    //public GameObject enemyBossTwo;
+
+    public GameObject deathZone;
     
     public static GameManager Instance;
 
@@ -57,4 +69,23 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
+
+    // public void TowerHeadVisible()
+    // {
+    //     towerRedHead.SetActive(true);
+    //     towerGreenHead.SetActive(true);
+    //     towerBlueHead.SetActive(true);
+    //     towerOrangeHead.SetActive(true);
+    //     towerPurpleHead.SetActive(true);
+    // }
+
+    public void BossesVisible()
+    {
+        enemyBossOne.SetActive(true);
+        deathZone.SetActive(true);
+        
+        //enemyBossTwo.SetActive(true);
+    }
+    
+    
 }

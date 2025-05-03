@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -22,15 +21,15 @@ public class PlayerController : MonoBehaviour
     
     
     //[SerializeField] private AudioSource _reloadAmmo;
-    // private Throw _throw;
+    //private Throw _throw;
 
-    private void Awake()
-    {
-        // _throw = GetComponent<Throw>();
-        // _throw._currentAmmo = _throw._poolObject.poolSize;
-        
-        //_reloadAmmo = GetComponentInChildren<AudioSource>();
-    }
+    // private void Awake()
+    // {
+    //     _throw = GetComponent<Throw>();
+    //     _throw._currentAmmo = _throw._poolObject.poolSize;
+    //     
+    //     _reloadAmmo = GetComponentInChildren<AudioSource>();
+    // }
     
     void Start()
     {
@@ -45,7 +44,7 @@ public class PlayerController : MonoBehaviour
         // {
         //     _throw.ThrowStone();
         // }
-        //
+        
         // if (Input.GetKeyDown(KeyCode.R))
         // {
         //     Debug.Log("RELOADING POOL");

@@ -1,4 +1,4 @@
-using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CrystalManager : MonoBehaviour
@@ -9,6 +9,8 @@ public class CrystalManager : MonoBehaviour
     public GameObject _canvasCrystalBlue;
     public GameObject _canvasCrystalOrange;
     public GameObject _canvasCrystalPurple;
+
+    public GameObject _canvasKeyFence;
     
     [Header("Кристаллы на локации")]
     public GameObject _redShard;
@@ -16,11 +18,15 @@ public class CrystalManager : MonoBehaviour
     public GameObject _blueShard;
     public GameObject _orangeShard;
     public GameObject _purpleShard;
+    
+    [Header("Кристаллы на алтаре")]
+    public GameObject altarGems;
+
+    public GameObject allGems;
+    
+    public GameObject keyFence;
 
     public AudioSource _takeCrystal;
-    
-    // [Header("Камни в Canvas")]
-    // public GameObject _canvasStone;
     
     public static CrystalManager Instance;
     
@@ -62,5 +68,18 @@ public class CrystalManager : MonoBehaviour
         _canvasCrystalPurple.SetActive(true);
         _purpleShard.SetActive(false);
         _takeCrystal.Play();
+    }
+    
+    public void PutAllGems()
+    {
+        altarGems.SetActive(true);
+        allGems.SetActive(false);
+    }
+    
+    public void KeyHide()
+    {
+        keyFence.SetActive(false);
+        _canvasKeyFence.SetActive(true);
+        
     }
 }

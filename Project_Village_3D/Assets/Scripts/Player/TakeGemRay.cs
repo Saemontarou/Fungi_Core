@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TakeGemRay : MonoBehaviour
@@ -9,9 +6,18 @@ public class TakeGemRay : MonoBehaviour
     public Camera camera;
     public GameObject TakeButton;
 
+    public DeathZoneDamage zoneDamage;
+
     private bool Take;
 
     RaycastHit hit;
+
+    public static TakeGemRay Instance;
+
+    void Start()
+    {
+        Instance = this;
+    }
 
     void Update()
     {
@@ -51,6 +57,12 @@ public class TakeGemRay : MonoBehaviour
                     Take = true;
                     GrabPurpleShard();
                 }
+                
+                // if (hit.collider.gameObject.CompareTag("Key") && Take != true)
+                // {
+                //     Take = true;
+                //     TakeKeyFence();
+                // }
             }
         }
         else
@@ -95,5 +107,86 @@ public class TakeGemRay : MonoBehaviour
         Take = false;
         Debug.Log("YOU PICK PURPLE");
         CrystalManager.Instance.TakeGemPurple();
+    }
+    
+    // public void TakeKeyFence()
+    // {
+    //     Take = false;
+    //     Debug.Log("YOU TAKE KEY FENCE");
+    //     CrystalManager.Instance.TakeKey();
+    // }
+
+    public void PutGems()
+    {
+        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit, RayDistance, LayerMask.GetMask("Altar")))
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                {
+                    Take = true;
+                    Debug.Log("YOU PUT ALL GEMS");
+                    CrystalManager.Instance.PutAllGems(); //pullallgems invoke
+                    StoneAltar.Instance.HideAltar(); 
+                    GameManager.Instance.BossesVisible();
+                    GateDoors.Instance.CloseGates();
+                    StoneTurret.Instance.TurretRise();
+                    zoneDamage.DamageZone();
+                    
+                    
+                    //GameManager.Instance.TowerHeadVisible();
+                }
+            }
+        }
+    }
+
+    public void OpenGate()
+    {
+        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit, RayDistance, LayerMask.GetMask("Button")))
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                {
+                    Debug.Log("YOU PRESS BUTTON");
+                    StoneButton.Instance.PressButton();
+                    GateDoors.Instance.OpenGates();
+                }
+            }
+        }
+    }
+    
+    public void InsertKey()
+    {
+        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit, RayDistance, LayerMask.GetMask("Key")))
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                {
+                    Debug.Log("YOU INSERT KEY AND OPEN FENCE");
+                    CrystalManager.Instance._canvasKeyFence.SetActive(false);
+                    ExitTrail.Instance.ExitTrailHide();
+                    ExitFence.Instance.FenceHide();
+                }
+            }
+        }
+    }
+    
+    public void TakeKey()
+    {
+        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit, RayDistance, LayerMask.GetMask("Key")))
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                {
+                    Debug.Log("YOU TAKE KEY FENCE");
+                    CrystalManager.Instance.KeyHide();
+                    ExitTrail.Instance.ExitTrailRise();
+                    //GateDoors.Instance.OpenGates();
+                }
+            }
+        }
     }
 }
