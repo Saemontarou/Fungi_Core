@@ -33,7 +33,7 @@ public class EnemyMovement : MonoBehaviour
         {
             if (EnemyState == State.Patrol)
             {
-                gameObject.GetComponent<Animator>().SetBool("Move", true);
+                gameObject.GetComponent<Animator>().SetBool("Running", true);
                 NavAgent.SetDestination(WayPoints[CurrentPatch].transform.position);
                 float patchDistance = Vector3.Distance(WayPoints[CurrentPatch].transform.position, gameObject.transform.position);
                 if (patchDistance < 2)
@@ -45,12 +45,12 @@ public class EnemyMovement : MonoBehaviour
 
             if (EnemyState == State.Stay)
             {
-                gameObject.GetComponent<Animator>().SetBool("Move", false);
+                gameObject.GetComponent<Animator>().SetBool("Running", false);
             }
 
             if (EnemyState == State.Chase)
             {
-                gameObject.GetComponent<Animator>().SetBool("Move", true);
+                gameObject.GetComponent<Animator>().SetBool("Running", true);
                 if (gameObject.GetComponent<FieldOfView>().canSeePlayer == false)
                 {
                     LastPoint = Player.transform;
@@ -76,7 +76,7 @@ public class EnemyMovement : MonoBehaviour
             }
             else
             {
-                gameObject.GetComponent<Animator>().SetBool("Move", true);
+                gameObject.GetComponent<Animator>().SetBool("Running", true);
             }
         }
 

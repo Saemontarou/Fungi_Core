@@ -15,12 +15,12 @@ public class Throw : MonoBehaviour
     //[SerializeField] private ParticleSystem _effect;
    
    
-    internal int _currentAmmo;
+    internal int _currentStones;
     private float _lastThrowTime;
    
     public void ThrowStone()
     {
-        if (CanThrow() && _currentAmmo > 0)
+        if (CanThrow() && _currentStones > 0)
         {
 
             {
@@ -50,7 +50,7 @@ public class Throw : MonoBehaviour
                 }
             }
 
-            _currentAmmo--;
+            _currentStones--;
         }
     }
    

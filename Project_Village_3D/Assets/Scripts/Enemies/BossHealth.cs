@@ -5,7 +5,7 @@ public class BossHealth : MonoBehaviour
 {
     public int Maxhealth = 100;
     private int CurrentHealth;
-
+    
     public BossHealthBar BossHealthBar;
     
     private void Start()
@@ -18,10 +18,13 @@ public class BossHealth : MonoBehaviour
         CurrentHealth -= damage;
         if (CurrentHealth <= 0)
         {
-            Destroy(gameObject);
-            StoneTurret.Instance.TurretHide();
-            StoneAltarRise.Instance.RiseAltar();
+            Die();
         }
         BossHealthBar.UpdateBossHealthBar(Maxhealth, CurrentHealth);
+    }
+
+    public void Die()
+    {
+        
     }
 }

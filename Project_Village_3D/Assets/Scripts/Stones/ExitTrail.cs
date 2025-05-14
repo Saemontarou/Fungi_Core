@@ -7,11 +7,18 @@ public class ExitTrail : MonoBehaviour
     public Animator animator;
     public AudioSource audioSource;
     
-    public static ExitTrail Instance;
-    
+    //public static ExitTrail Instance;
+
+    private void OnEnable()
+    {
+        ActionManager.ExitKeyHoleRise += ExitTrailRise;
+        ActionManager.ExitKeyHoleHide += ExitTrailHide;
+    }
+
     private void Start()
     {
-        Instance = this;
+        //Instance = this;
+        
         animator = GetComponent<Animator>();
         //audioSource = GetComponent<AudioSource>();
     }
@@ -27,5 +34,11 @@ public class ExitTrail : MonoBehaviour
     {
         animator.Play("ExitTrailHide");
         //audioSource.Play();
+    }
+
+    private void OnDisable()
+    {
+        ActionManager.ExitKeyHoleRise -= ExitTrailRise;
+        ActionManager.ExitKeyHoleHide -= ExitTrailHide;
     }
 }

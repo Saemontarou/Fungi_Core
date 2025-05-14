@@ -19,17 +19,18 @@ public class PlayerController : MonoBehaviour
     [HideInInspector]
     public bool canMove = true;
     
+    public AudioSource runSound;
     
-    //[SerializeField] private AudioSource _reloadAmmo;
-    //private Throw _throw;
+    
+    
+    [SerializeField] private AudioSource _reloadStones;
+    private Throw _throw;
 
-    // private void Awake()
-    // {
-    //     _throw = GetComponent<Throw>();
-    //     _throw._currentAmmo = _throw._poolObject.poolSize;
-    //     
-    //     _reloadAmmo = GetComponentInChildren<AudioSource>();
-    // }
+    private void Awake()
+    {
+        _throw = GetComponent<Throw>();
+        _throw._currentStones = _throw._poolObject.poolSize;
+    }
     
     void Start()
     {
@@ -40,25 +41,32 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // if(Input.GetMouseButtonDown(0))
-        // {
-        //     _throw.ThrowStone();
-        // }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            _throw.ThrowStone();
+        }
         
-        // if (Input.GetKeyDown(KeyCode.R))
-        // {
-        //     Debug.Log("RELOADING POOL");
-        //     _throw._currentAmmo = _throw._poolObject.poolSize;
-        //     _reloadAmmo.Play();
-        // }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Debug.Log("RELOADING POOL");
+            _throw._currentStones = _throw._poolObject.poolSize;
+            _reloadStones.Play();
+        }
         
         if(Input.GetKey(KeyCode.LeftShift))
         {
             Sprint = true;
+            {
+                if (!runSound.isPlaying)
+                {
+                    runSound.Play();
+                }
+            }
         }
         else
         {
             Sprint = false;
+            runSound.Stop();
         }
        
         Vector3 forward = transform.TransformDirection(Vector3.forward);

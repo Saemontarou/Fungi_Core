@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-public class TakeStoneRay : MonoBehaviour
+public class StoneManipulate : MonoBehaviour
 {
     public float grabPower = 10f;
     public float throwPower = 10f;
@@ -15,13 +16,18 @@ public class TakeStoneRay : MonoBehaviour
     public Camera _camera;
     
     RaycastHit hit;
-    
+
+    private void OnEnable()
+    {
+        ActionManager.TakeStones += TakeStone;
+    }
+
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-    void Update()
+    void TakeStone()
     {
         Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
         if (Input.GetMouseButtonDown(0))
@@ -61,5 +67,9 @@ public class TakeStoneRay : MonoBehaviour
         }
         
         Debug.DrawRay(ray.origin, ray.direction * 10, UnityEngine.Color.red);
+    }
+    private void OnDisable()
+    {
+        ActionManager.TakeStones -= TakeStone;
     }
 }

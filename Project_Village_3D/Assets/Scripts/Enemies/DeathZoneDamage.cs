@@ -9,14 +9,14 @@ public class DeathZoneDamage : MonoBehaviour
     public void DamageZone()
     {
         PlayerHealth.Instance.TakeDamage(damage);
-        heartBeat.Play();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            InvokeRepeating(nameof(DamageZone), 1, 2);
+            InvokeRepeating(nameof(DamageZone), 1, 3);
+            heartBeat.Play();
         }
     }
 

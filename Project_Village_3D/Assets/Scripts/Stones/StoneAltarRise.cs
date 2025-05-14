@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class StoneAltarRise : MonoBehaviour
@@ -5,12 +6,17 @@ public class StoneAltarRise : MonoBehaviour
     public Animator animator;
     //public AudioSource audioSource;
 
-    public static StoneAltarRise Instance;
+    //public static StoneAltarRise Instance;
 
-    
+    private void OnEnable()
+    {
+        ActionManager.AltarRiseAnimation += RiseAltar;
+    }
+
     private void Start()
     {
-        Instance = this;
+        //Instance = this;
+        
         animator = GetComponent<Animator>();
         //audioSource = GetComponent<AudioSource>();
     }
@@ -18,7 +24,7 @@ public class StoneAltarRise : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            TakeGemRay.Instance.TakeKey();
+            CrystalManipulate.Instance.TakeSoulKey();
         }
     }
     
@@ -28,5 +34,8 @@ public class StoneAltarRise : MonoBehaviour
         //audioSource.Play();
     }
 
-    
+    private void OnDisable()
+    {
+        ActionManager.AltarRiseAnimation -= RiseAltar;
+    }
 }

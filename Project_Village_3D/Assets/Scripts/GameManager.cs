@@ -15,10 +15,10 @@ public class GameManager : MonoBehaviour
     // public GameObject towerOrangeHead;
     // public GameObject towerPurpleHead;
 
-    public GameObject enemyBossOne;
+    //public GameObject enemyBossOne;
     //public GameObject enemyBossTwo;
 
-    public GameObject deathZone;
+    //public GameObject deathZone;
     
     public static GameManager Instance;
 
@@ -79,13 +79,13 @@ public class GameManager : MonoBehaviour
     //     towerPurpleHead.SetActive(true);
     // }
 
-    public void BossesVisible()
-    {
-        enemyBossOne.SetActive(true);
-        deathZone.SetActive(true);
-        
-        //enemyBossTwo.SetActive(true);
-    }
+    // public void BossesVisible()
+    // {
+    //     enemyBossOne.SetActive(true);
+    //     deathZone.SetActive(true);
+    //     
+    //     //enemyBossTwo.SetActive(true);
+    // }
     
     
 }

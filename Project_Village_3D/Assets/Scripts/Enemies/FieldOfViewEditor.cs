@@ -1,12 +1,12 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(FieldOfView))]
+[CustomEditor(typeof(EnemyReturn))]
 public class FieldOfViewEditor : Editor
 {
     private void OnSceneGUI()
     {
-        FieldOfView fov = (FieldOfView)target;
+        EnemyReturn fov = (EnemyReturn)target;
         Handles.color = Color.white;
         Handles.DrawWireArc(fov.transform.position, Vector3.up, Vector3.forward, 360, fov.radius);
 
@@ -20,7 +20,7 @@ public class FieldOfViewEditor : Editor
         if (fov.canSeePlayer)
         {
             Handles.color = Color.blue;
-            Handles.DrawLine(fov.transform.position, fov.playerTarget.transform.position);
+            Handles.DrawLine(fov.transform.position, fov.Player.transform.position);
         }
     }
 

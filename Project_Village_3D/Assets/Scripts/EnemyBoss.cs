@@ -1,99 +1,297 @@
-using System;
 using UnityEngine;
-using System.Collections;
 using UnityEngine.AI;
-using Random = UnityEngine.Random;
+using Color = UnityEngine.Color;
 
-public class Enemy : MonoBehaviour
+
+public class EnemyBoss : MonoBehaviour
 {
+    public int Maxhealth = 100;
+    private int CurrentHealth;
+    
+    public BossHealthBar BossHealthBar;
+    
+    
+
     public NavMeshAgent navAgent;
     public Transform player;
     public LayerMask groundLayer, playerLayer;
-    public float health;
     public float walkPointRange;
     public float timeBetweenAttacks;
     public float sightRange;
     public float attackRange;
-    public int damage;
-    // public Animator animator;
+    private Animator _animator;
     // public ParticleSystem hitEffect;
+    private Collider collider;
+    private int damage = 10;
 
+    public Transform enemyPoint;
+    public Transform[] Points;
+
+    public Transform pointRotation; //
+    public float rotationSpeed = 5f; // How fast to turn
+    public float faceThreshold = 5f; //
+    private bool isReturning = false;//
+    
+    private enum EnemyState { Idle, Chasing, Attacking, Searching } //
+    private EnemyState currentState = EnemyState.Idle; //
+    
+    
     private Vector3 walkPoint;
     private bool walkPointSet;
     private bool alreadyAttacked;
-    private bool takeDamage;
+    
+    RaycastHit hit;
 
+    public Transform rayCastPosition;
+    
     private void Awake()
     {
-        // animator = GetComponent<Animator>();
+        _animator = GetComponentInChildren<Animator>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         navAgent = GetComponent<NavMeshAgent>();
     }
 
-    private void Update()
+    private void Start()
+    {
+        CurrentHealth = Maxhealth;
+        collider = GetComponent<Collider>();
+    }
+
+    // private void Update()
+    // {
+    //     bool playerInSightRange = Physics.CheckSphere(transform.position, sightRange, playerLayer);
+    //     bool playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, playerLayer);
+    //     
+    //     
+    //     
+    //     if (!playerInSightRange && !playerInAttackRange)
+    //     {
+    //         ReturnOnPoint();
+    //         _animator.SetBool("Running", true);
+    //         _animator.SetBool("Idle", false);
+    //
+    //     }
+    //     else if (playerInSightRange && !playerInAttackRange)
+    //     {
+    //         ChasePlayer();
+    //         _animator.SetBool("Running", true);
+    //         _animator.SetBool("Idle", false);
+    //     }
+    //     else if (playerInAttackRange && playerInSightRange)
+    //     {
+    //         AttackPlayer();
+    //         _animator.SetBool("Running", false);
+    //         _animator.SetBool("Idle", false);
+    //     }
+    //     
+    //     if (!navAgent.hasPath || navAgent.velocity.magnitude < 0.1f)
+    //     {
+    //         _animator.SetBool("Running", false);
+    //         if (!alreadyAttacked)
+    //         {
+    //             _animator.SetBool("Idle", true);
+    //         }
+    //     }
+    // }
+    
+    private void Update() //
     {
         bool playerInSightRange = Physics.CheckSphere(transform.position, sightRange, playerLayer);
         bool playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, playerLayer);
+        
+        
+        switch (currentState)
+        {
+            case EnemyState.Idle:
+                if (!playerInSightRange && !playerInAttackRange)
+                {
+                    ReturnOnPoint();
+                    _animator.SetBool("Running", true);
+                    _animator.SetBool("Idle", false);
+                }
+                else if (playerInSightRange && !playerInAttackRange)
+                {
+                    CallRayCast();
+                }
+                break;
 
-        if (!playerInSightRange && !playerInAttackRange)
-        {
-            Patroling();
+            case EnemyState.Chasing:
+                ChasePlayer();
+                _animator.SetBool("Running", true);
+                _animator.SetBool("Idle", false);
+
+                if (playerInAttackRange)
+                {
+                    currentState = EnemyState.Attacking;
+                }
+                break;
+
+            case EnemyState.Attacking:
+                AttackPlayer();
+                _animator.SetBool("Running", false);
+                _animator.SetBool("Idle", false);
+
+                if (!playerInSightRange || !playerInAttackRange)
+                {
+                    currentState = EnemyState.Idle; // Return to idle if conditions are not met
+                }
+                break;
+
+            case EnemyState.Searching:
+                SearchForNewPosition();
+                _animator.SetBool("Running", true);
+                _animator.SetBool("Idle", false);
+                break;
         }
-        else if (playerInSightRange && !playerInAttackRange)
+        
+        if (!navAgent.hasPath || navAgent.velocity.magnitude < 0.1f)
         {
-            ChasePlayer();
+            _animator.SetBool("Running", false);
+            if (!alreadyAttacked)
+            {
+                _animator.SetBool("Idle", true);
+            }
         }
-        else if (playerInAttackRange && playerInSightRange)
+        
+        if (isReturning) //
         {
-            AttackPlayer();
-        }
-        else if (!playerInSightRange && takeDamage)
-        {
-            ChasePlayer();
+            TurnTowardsTarget();
+
+            // Optional: check if facing sufficiently close
+            Vector3 directionToTarget = (pointRotation.position - enemyPoint.position).normalized;
+            float angle = Vector3.Angle(enemyPoint.forward, directionToTarget);
+            if (angle < faceThreshold)
+            {
+                Debug.Log("Enemy is now facing the object and can stay");
+                // Set to stay or idle state here
+                isReturning = false; // or keep as needed
+            }
         }
     }
 
-    private void Patroling()
+    private void TurnTowardsTarget() //
+    {
+        Vector3 direction = (pointRotation.position - enemyPoint.position).normalized;
+        if (direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            enemyPoint.rotation = Quaternion.Slerp(enemyPoint.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
+    }
+
+    private void SearchForNewPosition()
+    {
+        if (!navAgent.pathPending && navAgent.remainingDistance < 0.5f) 
+        {
+            currentState = EnemyState.Idle; // Return to idle after reaching the new position
+            _animator.SetBool("Idle", true);
+            alreadyAttacked = false; // Reset attack flag after moving
+        }
+        
+        // You can add additional logic here if needed while searching.
+        // For example, you might want to play an animation or wait before returning.
+    }
+    
+    private Vector3 SearchPoints(Vector3 enemyPosition)
+    {
+        if (Points.Length == 0) return Vector3.zero;
+    
+        Transform nearestPoint = null;
+        float minSqrDistance = Mathf.Infinity;
+    
+        foreach (var point in Points)
+        {
+            float distanceSqr = (point.position - enemyPosition).sqrMagnitude;
+    
+            if (minSqrDistance > distanceSqr)
+            {
+                minSqrDistance = distanceSqr;
+                nearestPoint = point;
+            }
+        }
+    
+        return nearestPoint != null ? nearestPoint.position : Vector3.zero;
+    }
+    
+    private void CallRayCast()
+    {
+        float rayDistance = sightRange;
+        float angleRange = 160f; // degrees
+        int rayCount = 64; // number of rays within the cone
+        for (int i = 0; i < rayCount; i++)
+        {
+            float angle = -angleRange / 2 + (angleRange / (rayCount - 1)) * i;
+            Quaternion rotation = Quaternion.Euler(0, angle, 0);
+            Vector3 direction = rotation * rayCastPosition.forward;
+
+            Debug.DrawRay(rayCastPosition.position, direction * rayDistance, Color.red);
+
+            if (Physics.Raycast(rayCastPosition.position, direction, out hit, rayDistance))
+            {
+                if (hit.transform.CompareTag("Player"))
+                {
+                    Debug.Log("ENEMY SEE PLAYER");
+                    currentState = EnemyState.Chasing;
+                    break;
+                }
+            }
+        }
+    }
+    
+    
+    public void TakeDamage(int damage)
+    {
+        CurrentHealth -= damage;
+        if (CurrentHealth <= 0)
+        {
+            Die();
+        }
+        else //
+        {
+            currentState = EnemyState.Searching; // Change state to searching for a new position
+            Vector3 newPosition = SearchPoints(transform.position); // Find nearest point
+            navAgent.SetDestination(newPosition); // Move to that point
+            Debug.Log($"Moving to new position at {newPosition}");
+        }
+        
+        BossHealthBar.UpdateBossHealthBar(Maxhealth, CurrentHealth);
+    }
+    
+    
+    private void ReturnOnPoint()
     {
         if (!walkPointSet)
         {
-            SearchWalkPoint();
+            
+            walkPoint = enemyPoint.position;
+            walkPointSet = true;
+            _animator.SetBool("Running", true);
+            
         }
 
         if (walkPointSet)
         {
             navAgent.SetDestination(walkPoint);
         }
-
+        
         Vector3 distanceToWalkPoint = transform.position - walkPoint;
-        // animator.SetFloat("Velocity", 0.2f);
-
+        
         if (distanceToWalkPoint.magnitude < 1f)
         {
+            isReturning = true; //
             walkPointSet = false;
+            _animator.SetBool("Idle", true);
         }
     }
-
-    private void SearchWalkPoint()
-    {
-        float randomZ = Random.Range(-walkPointRange, walkPointRange);
-        float randomX = Random.Range(-walkPointRange, walkPointRange);
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
-
-        if (Physics.Raycast(walkPoint, -transform.up, 2f, groundLayer))
-        {
-            walkPointSet = true;
-        }
-    }
-
-   private void ChasePlayer()
+    
+    private void ChasePlayer()
 {
-    navAgent.SetDestination(player.position);
-    // animator.SetFloat("Velocity", 0.6f);
-    navAgent.isStopped = false; // Add this line
+    if(navAgent.SetDestination(player.position));
+    _animator.SetBool("Running", true);
+    //navAgent.isStopped = false; // Add this line
+    
 }
-
-
+   
   private void AttackPlayer()
 {
     navAgent.SetDestination(transform.position);
@@ -102,15 +300,20 @@ public class Enemy : MonoBehaviour
     {
         transform.LookAt(player.position);
         alreadyAttacked = true;
-        // animator.SetBool("Attack", true);
+        
+        _animator.SetTrigger("Attack");
         Invoke(nameof(ResetAttack), timeBetweenAttacks);
-    
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, attackRange))
+        
+        //if (Physics.Raycast(transform.position, transform.forward, out hit, attackRange))
+        if (Physics.Raycast(transform.position, transform.forward, out hit, 40f))
         {
-            
-            Debug.Log("ENEMY ATTACK");
-            
+            // if (hit.transform.CompareTag("Player"))
+            {
+                PlayerHealth.Instance.TakeDamage(damage);
+                Debug.Log("ENEMY ATTACK");
+            }
+
             /*
                 YOU CAN USE THIS TO GET THE PLAYER HUD AND CALL THE TAKE DAMAGE FUNCTION
 
@@ -121,52 +324,57 @@ public class Enemy : MonoBehaviour
             }
              */
         }
+        _animator.SetBool("Idle", false);
     }
 }
 
     private void ResetAttack()
     {
         alreadyAttacked = false;
-        // animator.SetBool("Attack", false);
-    }
-
-    public void TakeDamage(float damage)
-    {
-        health -= damage;
-        // hitEffect.Play();
-        StartCoroutine(TakeDamageCoroutine());
-
-        if (health <= 0)
+        
+        _animator.SetBool("Idle", false);
+        
+        if (!navAgent.hasPath || navAgent.velocity.magnitude < 0.1f)
         {
-            Invoke(nameof(DestroyEnemy), 0.5f);
+            _animator.SetBool("Idle", true);
         }
     }
-
-    private IEnumerator TakeDamageCoroutine()
+    public void Die()
     {
-        takeDamage = true;
-        yield return new WaitForSeconds(2f);
-        takeDamage = false;
+        _animator.SetTrigger("Death"); 
+        Destroy(gameObject, 100f);
+        navAgent.isStopped = true;
+        collider.enabled = false;
+        ActionManager.CreepBossDeath();
     }
-
-    private void DestroyEnemy()
-    {
-        StartCoroutine(DestroyEnemyCoroutine());
-    }
-
-    private IEnumerator DestroyEnemyCoroutine()
-    {
-        // animator.SetBool("Dead", true);
-        yield return new WaitForSeconds(1.8f);
-        Destroy(gameObject);
-    }
-    
 
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
-        Gizmos.color = Color.yellow;
+        Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, sightRange);
     }
 }
+
+
+
+// private Vector3 SearchPoints()
+// {
+//     if (Points.Length == 0) return Vector3.zero;
+//     Transform nearstPoint = null;
+//     float minSqrDistance = Mathf.Infinity;
+//
+//     foreach (var point in Points)
+//     {
+//         Vector3 distance = point.position = enemyPoint.position;
+//         float distaceSqr = distance.sqrMagnitude;
+//         if (minSqrDistance > distaceSqr)
+//         {
+//             minSqrDistance = distaceSqr;
+//             nearstPoint = point;
+//         }
+//     }
+//
+//     return nearstPoint.position;
+// }

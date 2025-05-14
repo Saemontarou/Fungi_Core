@@ -9,7 +9,7 @@ public class StoneTower : MonoBehaviour
 	[SerializeField] private float fireRate = 1;
 	[SerializeField] private float smooth = 1;
 	[SerializeField] private float rayOffset = 1;
-	[SerializeField] private float damage = 10;
+	[SerializeField] private float damage;
 	[SerializeField] private Transform bulletPoint;
 	[SerializeField] private Transform stoneHeadRotation;
 	[SerializeField] private Transform center;

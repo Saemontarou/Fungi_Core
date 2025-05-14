@@ -24,7 +24,9 @@ public class TowerBullet : MonoBehaviour
         {
             if(((1 << other.gameObject.layer) & layer) != 0)
             {
-                other.GetComponent<BossHealth>().TakeDamage(damage);
+                //other.GetComponent<BossHealth>().TakeDamage(damage);
+                other.GetComponent<EnemyBoss>().TakeDamage(damage);
+                //other.GetComponent<EnemyAI>().TakeDamage(damage);
             }
     
             Destroy(gameObject);

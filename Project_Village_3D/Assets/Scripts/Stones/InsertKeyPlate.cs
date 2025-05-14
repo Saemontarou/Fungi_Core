@@ -19,7 +19,7 @@ public class InsertKeyPlate : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            TakeGemRay.Instance.InsertKey();
+            CrystalManipulate.Instance.InsertSoulKey();
         }
     }
 }
