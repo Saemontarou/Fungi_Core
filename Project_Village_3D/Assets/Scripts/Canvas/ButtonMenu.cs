@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-public class ButtonMenu : MonoBehaviour
 
+public class ButtonMenu : MonoBehaviour
 {
     public void RestartGame()
     {
@@ -10,6 +10,6 @@ public class ButtonMenu : MonoBehaviour
 
     public void MainMenu()
     {
-        SceneManager.LoadScene("Menu");
+        SceneManager.LoadScene("MainMenu");
     }
 }

@@ -1,25 +1,32 @@
-using System;
 using UnityEngine;
 
 public class StoneManipulate : MonoBehaviour
 {
     public float grabPower = 10f;
     public float throwPower = 10f;
-    public float RayDistance = 5f;
-
-    public AudioSource _throwStone;
-
+    public float rayDistance = 5f;
+    
+    public Camera playerCamera;
+    public Transform takePoint;
+    public AudioSource throwStones;
+    public AudioSource takeStones;
+    
+    private ThrowStones _throw;
+    
     private bool Grab = false;
     private bool Throw = false;
-    
-    public Transform takePoint;
-    public Camera _camera;
     
     RaycastHit hit;
 
     private void OnEnable()
     {
-        ActionManager.TakeStones += TakeStone;
+        ActionManager.SmallStones += TakeSmallStones;
+    }
+
+    private void Awake()
+    {
+        _throw = GetComponent<ThrowStones>();
+        _throw._currentStones = _throw._poolObject.poolSize;
     }
 
     private void Start()
@@ -27,18 +34,20 @@ public class StoneManipulate : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-    void TakeStone()
+
+    private void Update()
     {
-        Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+        Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
+        
         if (Input.GetMouseButtonDown(0))
         {
-            Physics.Raycast(ray, out hit, RayDistance);
+            Physics.Raycast(ray, out hit, rayDistance);
             if (hit.rigidbody)
             {
                 Grab = true;
             }
         }
-       
+        
         if (Input.GetMouseButtonDown(1))
         {
             if (Grab)
@@ -47,7 +56,7 @@ public class StoneManipulate : MonoBehaviour
                 Throw = true;
             }
         }
-
+        
         if (Grab)
         {
             if (hit.rigidbody)
@@ -55,21 +64,36 @@ public class StoneManipulate : MonoBehaviour
                 hit.rigidbody.linearVelocity = (takePoint.position - (hit.transform.position + hit.rigidbody.centerOfMass)) * grabPower;
             }
         }
-
+        
         if (Throw)
         {
             if (hit.rigidbody)
             {
-                hit.rigidbody.linearVelocity = _camera.ScreenPointToRay(Input.mousePosition).direction * throwPower;
-                _throwStone.Play();
+                hit.rigidbody.linearVelocity = playerCamera.ScreenPointToRay(Input.mousePosition).direction * throwPower;
+                throwStones.Play();
                 Throw = false;
             }
         }
         
-        Debug.DrawRay(ray.origin, ray.direction * 10, UnityEngine.Color.red);
+        //Debug.DrawRay(ray.origin, ray.direction * 10, UnityEngine.Color.red);
     }
+
+    private void TakeSmallStones()
+    {
+        Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
+        
+        if (Physics.Raycast(ray, out hit, rayDistance, LayerMask.GetMask("Rock")))
+        {
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                _throw._currentStones = _throw._poolObject.poolSize;
+                takeStones.Play();
+            }
+        }
+    }
+    
     private void OnDisable()
     {
-        ActionManager.TakeStones -= TakeStone;
+        ActionManager.SmallStones -= TakeSmallStones;
     }
 }

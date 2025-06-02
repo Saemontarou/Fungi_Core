@@ -1,14 +1,22 @@
-using System;
 using UnityEngine;
 
 public class HealthRestoration : MonoBehaviour
 {
-    public int health;
-    //public AudioSource crystalMagic;
+    private int _health = 25;
+    [SerializeField] private GameObject playerHealth;
+    private PlayerHealth _takeHealth;
+    
+    private void Start()
+    {
+        if (playerHealth != null)
+        {
+            _takeHealth = playerHealth.GetComponent<PlayerHealth>();
+        }
+    }
     
     public void HealthZone()
     {
-        PlayerHealth.Instance.TakeHealth(health);
+        _takeHealth.TakeHealth(_health);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -16,13 +24,11 @@ public class HealthRestoration : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             InvokeRepeating(nameof(HealthZone), 1, 1);
-            //crystalMagic.Play();
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
         CancelInvoke(nameof(HealthZone));
-        //crystalMagic.Stop();
     }
 }

@@ -1,9 +1,9 @@
-using System;
 using UnityEngine;
 
 public class PauseHandler : MonoBehaviour
 {
    [SerializeField] private GameObject escMenu;
+  
    private void OnEnable()
    {
       GameManager.OnPause += HandlePause;
@@ -30,7 +30,6 @@ public class PauseHandler : MonoBehaviour
          {
             escMenu.SetActive(true);
             Time.timeScale = 0f;
-
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
          }

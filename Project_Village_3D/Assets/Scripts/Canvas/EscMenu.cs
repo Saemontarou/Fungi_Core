@@ -17,17 +17,16 @@ public class EscMenu : MonoBehaviour
                 aimImage.SetActive(true);
                 crystals.SetActive(true);
                 Time.timeScale = 1f;
-                
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }
+            
             else
             {
                 escMenu.SetActive(true);
                 aimImage.SetActive(false);
                 crystals.SetActive(false);
                 Time.timeScale = 0f; 
-                
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
@@ -36,6 +35,6 @@ public class EscMenu : MonoBehaviour
 
     public void MainMenu()
     {
-        SceneManager.LoadScene("Menu");
+        SceneManager.LoadScene("MainMenu");
     }
 }

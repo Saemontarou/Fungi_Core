@@ -1,106 +1,211 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
     public float walkingSpeed = 7.5f;
-    public float runningSpeed = 11.5f;
+    public float sprintingSpeed = 11.5f;
     public float jumpSpeed = 8.0f;
     public float gravity = 20.0f;
     
     public Camera playerCamera;
     public float lookSpeed = 2.0f;
     public float lookXLimit = 45.0f;
-    public bool Sprint;
+    
+    public float maxSprintTime = 5f;
+    private float _currentSprintTime;
+    private bool _isSprinting = false;
 
-    CharacterController characterController;
-    Vector3 moveDirection = Vector3.zero;
-    float rotationX = 0;
-
-    [HideInInspector]
-    public bool canMove = true;
+    public float sprintRecoveryRate = 1f;
+    
+    public Image sprintBar;
     
     public AudioSource runSound;
+    public AudioSource walkSound;
+    public AudioSource jumpSound;
+    public AudioSource sprintSound;
     
+    private CharacterController _characterController;
     
+    private ThrowStones _throw;
     
-    [SerializeField] private AudioSource _reloadStones;
-    private Throw _throw;
-
+    private float _rotationX = 0;
+    
+    private Vector3 _moveDirection = Vector3.zero;
+    
     private void Awake()
     {
-        _throw = GetComponent<Throw>();
-        _throw._currentStones = _throw._poolObject.poolSize;
-    }
-    
-    void Start()
-    {
-        characterController = GetComponent<CharacterController>();
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        _characterController = GetComponent<CharacterController>();
+        if (sprintBar != null)
+            sprintBar.fillAmount = 0;
+        _currentSprintTime = maxSprintTime;
+        
+        _throw = GetComponent<ThrowStones>();
     }
 
-    void Update()
+    private void Update()
+    {
+        HandleInput();
+        HandleMovement();
+        HandleCamera();
+        UpdateSprintUI();
+        HandleSprinting();
+        RecoverStamina();
+    }
+    
+    private void ThrowStone()
+    {
+        _throw.ThrowStone();
+    }
+
+    private void HandleInput()
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            _throw.ThrowStone();
+            ThrowStone();
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            StartSprinting();
         }
         
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyUp(KeyCode.LeftShift))
         {
-            Debug.Log("RELOADING POOL");
-            _throw._currentStones = _throw._poolObject.poolSize;
-            _reloadStones.Play();
+            StopSprinting();
         }
         
-        if(Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetButtonDown("Jump") && _characterController.isGrounded)
         {
-            Sprint = true;
+            Jump();
+        }
+    }
+
+    private void HandleMovement()
+    {
+        float inputX = Input.GetAxis("Horizontal");
+        float inputZ = Input.GetAxis("Vertical");
+
+        Vector3 forward = transform.forward;
+        Vector3 right = transform.right;
+
+        float speed = (_isSprinting && _currentSprintTime > 0) ? sprintingSpeed : walkingSpeed;
+
+        Vector3 targetMoveDirection = (forward * inputZ + right * inputX).normalized * speed;
+
+        if (_characterController.isGrounded)
+        {
+            _moveDirection.x = targetMoveDirection.x;
+            _moveDirection.z = targetMoveDirection.z;
+            
+            if (Input.GetButton("Jump"))
             {
-                if (!runSound.isPlaying)
-                {
-                    runSound.Play();
-                }
+                Jump();
+            }
+            
+            else
+            {
+                _moveDirection.y -= gravity * Time.deltaTime;
             }
         }
+        
         else
         {
-            Sprint = false;
+            _moveDirection.x = targetMoveDirection.x;
+            _moveDirection.z = targetMoveDirection.z;
+            _moveDirection.y -= gravity * Time.deltaTime;
+        }
+
+        _characterController.Move(_moveDirection * Time.deltaTime);
+        
+        ManagePlayerSounds(inputX, inputZ);
+    }
+
+    private void Jump()
+    {
+        _moveDirection.y = jumpSpeed;
+        jumpSound.Play();
+        walkSound.Stop();
+    }
+
+    private void HandleCamera()
+    {
+        _rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
+        _rotationX = Mathf.Clamp(_rotationX, -lookXLimit, lookXLimit);
+       
+        playerCamera.transform.localRotation = Quaternion.Euler(_rotationX, 0, 0);
+       
+        transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
+    }
+
+    private void HandleSprinting()
+    {
+        if (_isSprinting)
+        {
+            _currentSprintTime -= Time.deltaTime;
+            if (_currentSprintTime <= 0)
+            {
+                _currentSprintTime = 0;
+                StopSprinting();
+            }
+        }
+    }
+
+    private void StartSprinting()
+    {
+        if (!_isSprinting && _currentSprintTime > 0)
+        {
+            _isSprinting = true;
+            sprintSound.Play();
+            walkSound.Stop();
+        }
+    }
+
+    private void StopSprinting()
+    {
+        _isSprinting = false;
+        sprintSound.Stop();
+    }
+
+    private void UpdateSprintUI()
+    {
+        if (sprintBar != null)
+        {
+            float fillAmount = Mathf.Clamp01(_currentSprintTime / maxSprintTime);
+            sprintBar.fillAmount = fillAmount;
+        }
+    }
+
+    private void RecoverStamina()
+    {
+        if (!_isSprinting && _currentSprintTime < maxSprintTime)
+        {
+            _currentSprintTime += sprintRecoveryRate * Time.deltaTime;
+           
+            if (_currentSprintTime > maxSprintTime)
+                _currentSprintTime = maxSprintTime;
+
+            UpdateSprintUI();
+        }
+    }
+
+    private void ManagePlayerSounds(float inputX, float inputZ)
+    {
+        bool isMovingHorizontallyOrVertically = Mathf.Abs(inputX) > 0 || Mathf.Abs(inputZ) > 0;
+
+        if (_characterController.isGrounded && isMovingHorizontallyOrVertically)
+        {
+            if (!walkSound.isPlaying)
+                walkSound.Play();
+
+            if (_isSprinting && !runSound.isPlaying)
+                runSound.Play();
+        }
+        
+        else
+        {
+            walkSound.Stop();
             runSound.Stop();
-        }
-       
-        Vector3 forward = transform.TransformDirection(Vector3.forward);
-        Vector3 right = transform.TransformDirection(Vector3.right);
-        
-        bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        float curSpeedX = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Vertical") : 0;
-        float curSpeedY = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Horizontal") : 0;
-        float movementDirectionY = moveDirection.y;
-        moveDirection = (forward * curSpeedX) + (right * curSpeedY);
-
-        if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
-        {
-            moveDirection.y = jumpSpeed;
-        }
-        else
-        {
-            moveDirection.y = movementDirectionY;
-        }
-        
-        if (!characterController.isGrounded)
-        {
-            moveDirection.y -= gravity * Time.deltaTime;
-        }
-
-       
-        characterController.Move(moveDirection * Time.deltaTime);
-
-        if (canMove)
-        {
-            rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
-            rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
-            playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
-            transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
         }
     }
 }

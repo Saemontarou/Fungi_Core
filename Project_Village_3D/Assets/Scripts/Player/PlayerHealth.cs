@@ -1,48 +1,50 @@
 using UnityEngine;
-using System.Collections;
 
-public class PlayerHealth : MonoBehaviour 
+public class PlayerHealth : MonoBehaviour
 {
-    public int Maxhealth = 100; //
-    public int CurrentHealth;
-    
-    public AudioSource audioSource; // heartbeat
-
-    public static PlayerHealth Instance; //
+    private int _maxHealth = 1000;
+    private int _currentHealth;
     
     public PlayerHealthBar PlayerHealthBar;
     
+    [SerializeField] private GameObject gameManager;
+    private GameManager _lose;
+    
+    public AudioSource healthDamage;
+    public AudioSource healthRegeneration;
+    
     private void Start()
     {
-        Instance = this; //
-        CurrentHealth = Maxhealth;
+        _lose = gameManager.GetComponent<GameManager>();
+        _currentHealth = _maxHealth;
     }
 
     public void TakeDamage(int damage)
     {
-        CurrentHealth -= damage;
-        if (CurrentHealth <= 0)
+        _currentHealth -= damage;
+        healthDamage.Play();
+        
+        if (_currentHealth <= 0)
         {
+            _lose.Lose();
             Destroy(gameObject);
-            GameManager.Instance.Lose(); //
         }
 
-        PlayerHealthBar.UpdatePlayerHealthBar(Maxhealth, CurrentHealth);
+        PlayerHealthBar.UpdatePlayerHealthBar(_maxHealth, _currentHealth);
     }
 
     public void TakeHealth(int health)
     {
-        //CurrentHealth += health;
-        if (CurrentHealth < Maxhealth);
+        if (_currentHealth < _maxHealth)
         {
-            CurrentHealth += health;
-            if (CurrentHealth > Maxhealth)
+            _currentHealth += health;
+            healthRegeneration.Play();
+            if (_currentHealth > _maxHealth)
             {
-                CurrentHealth = Maxhealth;
-                Debug.Log("OKAY, YOUR HEALTH FULL");
+                _currentHealth = _maxHealth;
             }
         }
-
-        PlayerHealthBar.UpdatePlayerHealthBar(Maxhealth, CurrentHealth);
+        
+        PlayerHealthBar.UpdatePlayerHealthBar(_maxHealth, _currentHealth);
     }
 }

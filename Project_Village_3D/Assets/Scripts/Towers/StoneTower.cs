@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class StoneTower : MonoBehaviour 
 {
-
 	[SerializeField] private TowerBullet bulletPrefab;
 	[SerializeField] private float fireRate = 1;
 	[SerializeField] private float smooth = 1;
@@ -21,10 +20,8 @@ public class StoneTower : MonoBehaviour
 	private int index;
 	private float curFireRate;
 	private Quaternion defaultRot = Quaternion.identity;
-	
-	//private Shoot _shoot; //
 
-	void Awake()
+	private void Awake()
 	{
 		turretTrigger = GetComponent<SphereCollider>();
 		turretTrigger.isTrigger = true;
@@ -32,11 +29,9 @@ public class StoneTower : MonoBehaviour
 		curFireRate = fireRate;
 		turretTrigger.enabled = true;
 		enabled = false;
-		
-		//_shoot = GetComponent<Shoot>(); //
 	}
 
-	void OnTriggerEnter(Collider other)
+	private void OnTriggerEnter(Collider other)
 	{
 		if(CheckLayerMask(other.gameObject, layerMask))
 		{
@@ -46,17 +41,16 @@ public class StoneTower : MonoBehaviour
 		}
 	}
 
-	Transform FindTarget()
+	private Transform FindTarget()
 	{
 		Collider[] colliders = Physics.OverlapSphere(transform.position + offset, turretTrigger.radius, layerMask);
-
 		Collider currentCollider = null;
 		float dist = Mathf.Infinity;
-
+		
 		foreach(Collider coll in colliders)
 		{
 			float currentDist = Vector3.Distance(transform.position + offset, coll.transform.position);
-
+			
 			if(currentDist < dist)
 			{
 				currentCollider = coll;
@@ -83,18 +77,17 @@ public class StoneTower : MonoBehaviour
 		Debug.DrawRay(stoneHeadRotation.position, center.forward * (turretTrigger.radius + rayOffset));
 		Vector3 rotation = Quaternion.Lerp(stoneHeadRotation.rotation, Quaternion.LookRotation(lookPos), smooth * Time.deltaTime).eulerAngles;
 		
-		
-		 rotation.z = 0;
-		 stoneHeadRotation.eulerAngles = rotation;
+		rotation.z = 0;
+		stoneHeadRotation.eulerAngles = rotation;
 
 		if(dist > turretTrigger.radius + rayOffset)
 		{
 			target = null;
 			return false;
 		}
-
+		
 		if(IsRaycastHit(center)) return true;
-
+		
 		return false;
 	}
 
@@ -123,18 +116,13 @@ public class StoneTower : MonoBehaviour
 		return false;
 	}
 
-	void Shot()
+	private void Shot()
 	{
 		if(!Search()) return;
-
 		curFireRate += Time.deltaTime;
+		
 		if(curFireRate > fireRate)
 		{
-
-
-			//_shoot.ShootCore(); //
-
-
 			Transform point = bulletPoint;
 			curFireRate = 0;
 
@@ -142,17 +130,14 @@ public class StoneTower : MonoBehaviour
 			{
 				TowerBullet bullet = Instantiate(bulletPrefab, point.position, Quaternion.identity) as TowerBullet;
 				bullet.SetBullet(layerMask, point.forward);
-				
 			}
 		}
 	}
 
-	void Choice()
+	private void Choice()
 	{
 		curFireRate = fireRate;
-
 		target = FindTarget();
-
 		stoneHeadRotation.rotation = Quaternion.Lerp(stoneHeadRotation.rotation, defaultRot, smooth * Time.deltaTime);
 
 		if(Quaternion.Angle(stoneHeadRotation.rotation, defaultRot) == 0)
@@ -163,12 +148,13 @@ public class StoneTower : MonoBehaviour
 		}
 	}
 
-	void LateUpdate()
+	private void LateUpdate()
 	{
 		if (target != null)
 		{
 			Shot();
 		}
+		
 		else
 		{
 			Choice();

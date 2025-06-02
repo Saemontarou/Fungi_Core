@@ -3,6 +3,16 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    public void PlayAnimation()
+    {
+        Invoke("PlayGame", 2f);
+    }
+    
+    public void ExitAnimation()
+    {
+        Invoke("ExitGame", 2f);
+    }
+
     public void PlayGame()
     {
         SceneManager.LoadScene("MainScene");
@@ -10,7 +20,7 @@ public class MainMenu : MonoBehaviour
 
     public void ExitGame()
     {
-        Debug.Log("EXIT GAME");
         Application.Quit();
+        Debug.Log("EXIT GAME");
     }
 }
